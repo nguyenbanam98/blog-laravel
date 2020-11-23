@@ -28,8 +28,6 @@ Route::group([
 ], function () {
 
     Route::get('/', 'AdminController@index')->name('index');
-    Route::post('/login-admin', 'AdminController@login')->name('login');
-    Route::get('/logout', 'AdminController@logout')->name('logout');
     Route::get('/dashboard', 'AdminController@show')->name('dashboard');
 
 // category
@@ -101,4 +99,9 @@ Route::group([
 
 Auth::routes();
 
+// client
 Route::get('/home', 'HomeController@index')->name('home');
+
+Route::get('danh-muc/{slug}-{id}', 'CategoryController@getListProduct')->name('get.list.product');
+
+Route::get('san-pham/{slug}-{id}', 'ProductController@productDetail')->name('get.product.detail');

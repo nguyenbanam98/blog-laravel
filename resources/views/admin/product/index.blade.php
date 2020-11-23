@@ -6,6 +6,10 @@
 
 @endsection
 
+@push('css')
+    <link href="{{asset('admins/product/index/list.css')}}" rel="stylesheet" />
+@endpush
+
 @section('content')
 
 <div class="content-wrapper">
@@ -48,6 +52,7 @@
                           <tr>      
                             <th>#</th>
                             <th>San pham</th>
+                            <th>Anh</th>
                             <th>Gia</th>
                             <th>Gia khuyen mai</th>
                             <th>Danh muc</th>
@@ -62,6 +67,9 @@
                                 <tr>
                                     <td>{{$product->id}}</td>
                                     <td>{{$product->name}}</td>
+                                    <td>
+                                        <img class="product_image_150_100" src="{{ $product->img_path }}" alt="">
+                                    </td>
                                     <td>
                                         <span>{{number_format($product->price)}} vnd</span>
                                     </td>

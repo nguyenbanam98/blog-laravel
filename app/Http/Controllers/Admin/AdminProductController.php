@@ -5,11 +5,14 @@ namespace App\Http\Controllers\Admin;
 use App\Category;
 use App\Http\Controllers\Controller;
 use App\Product;
+use App\ProductImage;
+use App\Traits\StorageImageTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class AdminProductController extends Controller
 {
+    use StorageImageTrait;
 
     private $product;
 
@@ -50,9 +53,30 @@ class AdminProductController extends Controller
     }
     public function store(Request $request)
     {
-        $this->saveProduct($request);
 
-        return redirect()->back();
+        $dataUploadFeatureImage = $this->storageTraitUpload($request, 'feature_image_path', 'product');
+        $dataImageProduct = [];
+
+        if (!empty($dataUploadFeatureImage)) {
+
+            $dataImageProduct['img_name'] = $dataUploadFeatureImage['file_name'];
+            $dataImageProduct['img_path'] = $dataUploadFeatureImage['file_path'];
+        }
+
+        $dataProductCreate = $this->saveProduct($request, null, $dataImageProduct);
+
+        if ($request->hasFile('image_path')) {
+            foreach ($request->image_path as $fileItem) {
+                $dataProductImageDetail = $this->storageTraitUploadMutiple($fileItem, 'product');
+
+                $dataProductCreate->images()->create([
+                    'image_path' => $dataProductImageDetail['file_path'],
+                    'image_name' => $dataProductImageDetail['file_name'],
+                ]);
+            }
+        }
+
+        return redirect()->route('admin.products.index');
     }
 
     public function edit($id)
@@ -66,12 +90,38 @@ class AdminProductController extends Controller
 
     public function update(Request $request, $id)
     {
-        $this->saveProduct($request, $id);
+
+        $dataUploadFeatureImage = $this->storageTraitUpload($request, 'feature_image_path', 'product');
+        $dataImageProduct = [];
+
+        if (!empty($dataUploadFeatureImage)) {
+
+            $dataImageProduct['img_name'] = $dataUploadFeatureImage['file_name'];
+            $dataImageProduct['img_path'] = $dataUploadFeatureImage['file_path'];
+        }
+
+        $dataProductCreate = $this->saveProduct($request, $id, $dataImageProduct);
+
+        $product = $this->product->find($id);
+
+        if ($request->hasFile('image_path')) {
+
+            ProductImage::where('product_id', $id)->delete();
+
+            foreach ($request->image_path as $fileItem) {
+                $dataProductImageDetail = $this->storageTraitUploadMutiple($fileItem, 'product');
+
+                $product->images()->create([
+                    'image_path' => $dataProductImageDetail['file_path'],
+                    'image_name' => $dataProductImageDetail['file_name'],
+                ]);
+            }
+        }
 
         return redirect()->route('admin.products.index');
     }
 
-    public function saveProduct($request, int $id = null)
+    public function saveProduct($request, int $id = null, $imageName = null)
     {
 
         return $this->product->updateOrCreate(
@@ -82,10 +132,14 @@ class AdminProductController extends Controller
                 'name' => $request->name,
                 'slug' => Str::slug($request->name),
                 'content' => $request->content,
+                'author_id' => auth()->user()->id,
                 'title_seo' => $request->title_seo ?? $request->name,
                 'description' => $request->description,
                 'description_seo' => $request->description_seo,
                 'category_id' => $request->category_id,
+                'hot' => $request->hot ?? 0,
+                'img_name' => $imageName['img_name'],
+                'img_path' => $imageName['img_path'],
                 'price' => $request->price,
                 'sale' => $request->sale,
             ]
