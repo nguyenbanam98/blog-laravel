@@ -14,11 +14,57 @@ use Illuminate\Support\Facades\Route;
  */
 
 //  font end
+
+Route::group([
+    'namespace' => 'Auth',
+
+], function () {
+    // Route::get('/dang-ky', 'RegisterController@getRegister')->name('get.register');
+    Route::post('/dang-ky', 'RegisterController@postRegister')->name('post.register');
+
+    Route::get('/dang-nhap', 'LoginController@getLogin')->name('get.login');
+    Route::post('/dang-nhap', 'LoginController@postLogin')->name('post.login');
+
+    Route::get('dang-xuat', 'LoginController@getLogout')->name('get.logout');
+
+});
+
+// home
 Route::get('/', 'HomeController@index');
 
-Route::get('/trang-chu', 'HomeController@index');
+Route::get('/trang-chu', 'HomeController@index')->name('trang.chu');
 
-// back end
+// category
+Route::get('/danh-muc-san-pham/{id}', 'CategoryController@showCategoryHome')->name('get.category.index');
+
+// brand
+Route::get('/thuong-hieu/{id}', 'BrandController@showBrandHome')->name('get.brand.index');
+
+// product
+Route::get('/san-pham/{id}', 'ProductController@productDetail')->name('get.product.detail');
+
+// Cart
+
+Route::post('/save-cart', 'CartController@saveCart')->name('save.cart');
+Route::get('/show-cart', 'CartController@show')->name('show.cart');
+Route::get('/delete/{id}', 'CartController@delete')->name('delete.cart');
+Route::post('/update-qty/{id}', 'CartController@updateQty')->name('update.qty');
+
+// Check Out
+Route::get('/checkout', 'CheckoutController@checkout')->middleware('check.login')->name('login.checkout');
+
+// Route::group([
+//     'middleware' => 'atuh',
+// ], function () {
+
+// });
+
+/*
+|--------------------------------------------------------------------------
+| Back end
+|--------------------------------------------------------------------------
+
+ */
 Route::group([
 
     'prefix' => 'admin',
@@ -95,13 +141,26 @@ Route::group([
         Route::get('/{action}/{id}', 'AdminArticleController@action')->name('action');
 
     });
+    // brand
+
+    Route::group([
+
+        'prefix' => 'brands',
+        'as' => 'brands.',
+
+    ], function () {
+
+        Route::get('/', 'AdminBrandController@index')->name('index');
+
+        Route::get('/create', 'AdminBrandController@create')->name('create');
+
+        Route::post('/store', 'AdminBrandController@store')->name('store');
+
+        Route::get('/edit/{id}', 'AdminBrandController@edit')->name('edit');
+
+        Route::post('/update/{id}', 'AdminBrandController@update')->name('update');
+
+        Route::get('/{action}/{id}', 'AdminBrandController@action')->name('action');
+
+    });
 });
-
-Auth::routes();
-
-// client
-Route::get('/home', 'HomeController@index')->name('home');
-
-Route::get('danh-muc/{slug}-{id}', 'CategoryController@getListProduct')->name('get.list.product');
-
-Route::get('san-pham/{slug}-{id}', 'ProductController@productDetail')->name('get.product.detail');

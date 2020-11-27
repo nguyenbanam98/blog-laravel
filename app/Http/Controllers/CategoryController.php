@@ -2,23 +2,34 @@
 
 namespace App\Http\Controllers;
 
+use App\Brand;
+use App\Category;
 use App\Product;
 use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    public function getListProduct(Request $request)
+    public function showCategoryHome($id)
     {
-        $url = $request->segment(2);
-        $url = preg_split('/(-)/i', $url);
+        $category = Category::findOrFail($id);
 
-        if ($id = array_pop($url)) {
-            $product = Product::where([
-                'category_id' => $id,
-                'active' => 1,
-            ])->orderByDesc('id')->paginate(10);
-        }
+        $categories = Category::where('active', 1)->latest()->get();
 
-        return redirect('/');
+        $brands = Brand::where('active', 1)->latest()->get();
+
+        $products = $category->products->where('active', 1)->all();
+
+        // $quantity = $brand->products->where('active', 1)->count();
+
+        $dataView = [
+            'categories' => $categories,
+            'brands' => $brands,
+            'category' => $category,
+            'products' => $products,
+            // 'quantity' => $quantity,
+
+        ];
+
+        return view('pages.category.show', $dataView);
     }
 }

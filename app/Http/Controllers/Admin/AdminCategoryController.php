@@ -34,10 +34,10 @@ class AdminCategoryController extends Controller
                 'id' => $id,
             ],
             [
-                'name' => $request->product,
-                'slug' => Str::slug($request->product),
+                'name' => $request->category,
+                'slug' => Str::slug($request->category),
                 'icon' => Str::slug($request->icon),
-                'title_seo' => $request->title_seo ?? $request->product,
+                'title_seo' => $request->title_seo ?? $request->category,
                 'description' => $request->description,
             ]
         );
@@ -73,6 +73,10 @@ class AdminCategoryController extends Controller
             switch ($action) {
                 case 'delete':
                     $category->delete($id);
+                    break;
+                case 'active':
+                    $category->active = $category->active ? 0 : 1;
+                    $category->save();
                     break;
             }
         }

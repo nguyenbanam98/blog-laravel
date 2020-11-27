@@ -13,15 +13,25 @@
             <label for="exampleFormControlTextarea1">Noi dung</label>
             <textarea class="form-control" id="exampleFormControlTextarea1" name="content" rows="3">{{old('content', $product->content ?? '')}}</textarea>
         </div>
-        {{-- <div class="form-group">
-            <label for="product_title">Meta title</label>
-            <input type="text" class="form-control" name="title_seo" value="{{old('title_seo', $product->title_seo ?? '')}}" id="product_title" placeholder="Nhap ten title seo">
-        </div>
 
         <div class="form-group">
-            <label for="meta_description">Meta description</label>
-            <input type="text" class="form-control" name="description_seo" value="{{old('description_seo', $product->description_seo ?? '')}}"id="meta_description" placeholder="Nhap ten title seo">
-        </div> --}}
+            <label>Ảnh đại diện</label>
+            <input type="file"
+                class="form-control-file"
+                name="feature_image_path"
+            >
+        </div>
+        @if(isset($product->img_path))
+            <div class="col-md-3">
+                <div class="card">
+                    <img src="{{ $product->img_path }}" 
+                        style=" width: 130px;
+                                height: 100px;
+                                object-fit: cover;" 
+                        class="card-img-top" alt="">
+                </div>
+            </div>
+        @endif
 
         <div class="form-group form-check">
             <input type="checkbox" name="hot" value="1" class="form-check-input" id="exampleCheck1">
@@ -47,6 +57,19 @@
         </div>
 
         <div class="form-group">
+            <label for="loai_san_pham">Thuong hieu</label>
+            <select class="form-control" id="loai_san_pham" name="brand_id">
+                <option value="">---Chon loai thuong hieu---</option>
+                @if($brands)
+                    @foreach($brands as $brand)
+                        <option value="{{$brand->id}}" {{ isset($product->brand_id) ?? '' ==  $brand->id ? 'selected' : '' }}>{{$brand->name}}</option> 
+                        
+                    @endforeach
+                @endif
+            </select>
+        </div>
+
+        <div class="form-group">
             <label for="product_price">Gia san pham</label>
             <input type="text" class="form-control" name="price" value="{{old('price', $product->price ?? '')}}" id="product_price" placeholder="Nhap ten title seo">
         </div>
@@ -54,15 +77,6 @@
         <div class="form-group">
             <label for="product_discount">Gia khuyen mai %</label>
             <input type="text" class="form-control" name="sale" value="{{old('sale', $product->sale ?? '0')}}" id="product_discount" placeholder="Nhap ten title seo">
-        </div>
-
-   
-        <div class="form-group">
-            <label>Ảnh đại diện</label>
-            <input type="file"
-                class="form-control-file"
-                name="feature_image_path"
-            >
         </div>
 
         <div class="form-group">
@@ -73,6 +87,22 @@
                 name="image_path[]"
             >
         </div>
+        @if(isset($product->images))
+            <div class="col-md-12 container_image_detail">
+                <div class="row">
+                    @foreach($product->images as $producImageItem)
+                                <div class="col-md-3 mr-1">
+                                    <div class="card">
+                                        <img  src="{{ $producImageItem->image_path }}" class="card-img-top" alt="" style=" width: 130px;
+                                        height: 100px;
+                                        object-fit: cover;">
+                                    </div>
+                                </div>
+                    @endforeach
+                </div>
+            </div> 
+        @endif
+       
 
        
     </div>

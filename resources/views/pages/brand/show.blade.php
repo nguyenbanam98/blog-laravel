@@ -1,5 +1,9 @@
+@extends('layouts.master')
+
+@section('content')
+
 <div class="features_items">
-    <h2 class="title text-center">Sản phẩm mới nhất</h2>
+    <h2 class="title text-center">{{$brand->name}}</h2>
     @foreach($products as $product)
         
         <div class="col-sm-4">
@@ -11,6 +15,7 @@
                                 <h2>{{ number_format($product->price) }} VNĐ</h2>
                                 <p>{{$product->name}}</p>
                             </a>
+                            
                             <a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
                         </div>
                         {{-- <div class="product-overlay">
@@ -32,5 +37,6 @@
 
     @endforeach
 
-    
 </div>
+
+@endsection

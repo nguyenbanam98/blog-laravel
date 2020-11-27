@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Brand;
 use App\Category;
 use App\Http\Controllers\Controller;
 use App\Product;
@@ -16,10 +17,12 @@ class AdminProductController extends Controller
 
     private $product;
 
-    public function __construct(Product $product, Category $category)
+    public function __construct(Product $product, Category $category, Brand $brand)
     {
         $this->product = $product;
         $this->category = $category;
+        $this->brand = $brand;
+
     }
 
     public function index(Request $request)
@@ -38,9 +41,12 @@ class AdminProductController extends Controller
 
         $categories = $this->category->all();
 
+        $brands = $this->brand->all();
+
         $viewData = [
             'products' => $products,
             'categories' => $categories,
+            'brands' => $brands,
         ];
         return view('admin.product.index', $viewData);
     }
@@ -48,7 +54,9 @@ class AdminProductController extends Controller
     public function create()
     {
         $categories = $this->category->all();
-        return view('admin.product.add', compact('categories'));
+        $brands = $this->brand->all();
+
+        return view('admin.product.add', compact('categories', 'brands'));
 
     }
     public function store(Request $request)
@@ -85,7 +93,9 @@ class AdminProductController extends Controller
 
         $product = $this->product->findOrFail($id);
 
-        return view('admin.product.edit', compact('product', 'categories'));
+        $brands = $this->brand->all();
+
+        return view('admin.product.edit', compact('product', 'categories', 'brands'));
     }
 
     public function update(Request $request, $id)
@@ -121,7 +131,7 @@ class AdminProductController extends Controller
         return redirect()->route('admin.products.index');
     }
 
-    public function saveProduct($request, int $id = null, $imageName = null)
+    protected function saveProduct($request, int $id = null, $imageName = null)
     {
 
         return $this->product->updateOrCreate(
@@ -137,6 +147,7 @@ class AdminProductController extends Controller
                 'description' => $request->description,
                 'description_seo' => $request->description_seo,
                 'category_id' => $request->category_id,
+                'brand_id' => $request->brand_id,
                 'hot' => $request->hot ?? 0,
                 'img_name' => $imageName['img_name'],
                 'img_path' => $imageName['img_path'],

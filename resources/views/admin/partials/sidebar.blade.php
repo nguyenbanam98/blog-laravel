@@ -53,7 +53,14 @@
                     <i class="far fa-circle nav-icon"></i>
                     <p>Danh sach bai viet</p>
                   </a>
-                </li>     
+                </li>    
+                
+                <li class="nav-item">
+                    <a href="{{route('admin.brands.index')}}" class="nav-link active">
+                      <i class="far fa-circle nav-icon"></i>
+                      <p>Danh thuong hieu</p>
+                    </a>
+                  </li> 
           </ul>
       </nav>
       <!-- /.sidebar-menu -->

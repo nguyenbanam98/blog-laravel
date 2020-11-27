@@ -5,12 +5,9 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 
-class Category extends Model
+class Brand extends Model
 {
     protected $guarded = [];
-
-    // const STATUS_PUBLIC = 1;
-    // const STATUS_PRIVATE = 0;
 
     protected $status = [
         1 => [
@@ -32,4 +29,5 @@ class Category extends Model
     {
         return $this->hasMany(Product::class);
     }
+
 }
